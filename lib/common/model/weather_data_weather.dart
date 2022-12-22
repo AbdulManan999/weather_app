@@ -1,5 +1,3 @@
-
-
 class WeatherDataWeather {
   String main;
   String description;
