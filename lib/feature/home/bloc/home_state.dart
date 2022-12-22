@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:weather_app/common/model/current_weather.dart';
+import 'package:weather_app/common/model/weather.dart';
+import 'package:weather_app/common/model/weather_data.dart';
 
 class HomeState extends Equatable {
   const HomeState();
@@ -40,3 +43,31 @@ class VoiceDataReceived extends HomeState {
 }
 
 class VoiceDataReceiving extends HomeState {}
+
+class WeatherDataGetting extends HomeState {}
+
+class WeatherDataGot extends HomeState {
+  final Weather weather;
+  final CurrentWeather currentWeather;
+
+  WeatherDataGot({@required this.weather, @required this.currentWeather});
+}
+
+class WeatherDataGetFailed extends HomeState {
+  final String error;
+  WeatherDataGetFailed({@required this.error});
+}
+
+class WeatherDataFiltering extends HomeState {}
+
+class WeatherDataFiltered extends HomeState {
+  final List<WeatherData> filteredWeatherData;
+
+  WeatherDataFiltered({@required this.filteredWeatherData});
+}
+
+class WeatherDataFilterFailed extends HomeState {
+  final String error;
+
+  WeatherDataFilterFailed({@required this.error});
+}

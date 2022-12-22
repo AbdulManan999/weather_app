@@ -16,13 +16,13 @@ class DataResponse<T> {
     return "Status : $status \n Message : $message \n Data : $data";
   }
 
-  static DataResponse processResponse(Map response) {
-    bool error = !(response["status"]);
+  static DataResponse<Map<String, dynamic>> processResponse(Map response) {
+    bool error = (response["cod"].toString() != "200");
 
     if (error) {
-      return DataResponse.error(response["data"]);
+      return DataResponse.error(response["message"]);
     }
-    return DataResponse.success(response["data"]["user"]);
+    return DataResponse.success(response);
   }
 }
 

@@ -5,7 +5,7 @@ class Env {
 }
 
 mixin EnvValue {
-  static final Env development = Env('https://engage.datalyticx.ai/api/');
-  static final Env staging = Env('https://engage.datalyticx.ai/api/');
-  static final Env production = Env('https://engage.datalyticx.ai/api/');
+  static final Env development = Env('http://api.openweathermap.org/data/2.5/');
+  static final Env staging = Env('http://api.openweathermap.org/data/2.5/');
+  static final Env production = Env('http://api.openweathermap.org/data/2.5/');
 }

@@ -1,11 +1,15 @@
-import 'dart:async';
+import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:weather_app/common/http/response.dart';
+import 'package:weather_app/common/model/current_weather.dart';
+import 'package:weather_app/common/model/weather.dart';
+import 'package:weather_app/common/model/weather_data.dart';
+import 'package:weather_app/feature/home/resource/home_repository.dart';
 
 import 'index.dart';
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'package:speech_to_text/speech_recognition_result.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeState()) {
@@ -22,6 +26,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                   error: speechRecognitionError.errorMsg));
             },
             onStatus: _onSpeechListening);
+        emit(HomeVoiceInitializedSuccess());
       } catch (ex, stack) {
         emit(HomeVoiceInitializedFailed(error: ex.toString()));
       }
@@ -47,6 +52,58 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<OnHomeVoiceOverFetched>((event, emit) async {
       emit(VoiceDataReceiving());
       emit(VoiceDataReceived(text: event.data));
+    });
+
+    on<GetWeatherData>((event, emit) async {
+      emit(WeatherDataGetting());
+      try {
+        HomeRepository homeRepository = HomeRepository(env: event.env);
+        DataResponse response =
+            await homeRepository.getWeatherData(city: event.city);
+        if (response.status == Status.Success) {
+          Weather weather = Weather.getWeatherFromMap(response.data);
+          DataResponse response1 =
+              await homeRepository.getCurrentWeatherData(city: event.city);
+          if (response1.status == Status.Success) {
+            CurrentWeather currentWeather =
+                CurrentWeather.getWeatherFromMap(response1.data);
+            emit(WeatherDataGot(
+                weather: weather, currentWeather: currentWeather));
+          } else {
+            emit(WeatherDataGetFailed(error: response1.message));
+          }
+        } else {
+          emit(WeatherDataGetFailed(error: response.message));
+        }
+      } catch (ex, stack) {
+        debugPrintStack(stackTrace: stack, label: ex.toString());
+        emit(WeatherDataGetFailed(error: ex.toString()));
+      }
+    });
+
+    on<FilterWeatherData>((event, emit) async {
+      emit(WeatherDataFiltering());
+      try {
+        List<WeatherData> filteredWeather = [];
+        int prev = 0;
+        await event.weather.weatherData.forEach((element) {
+          if (DateTime.now()
+                  .difference(DateTime.fromMillisecondsSinceEpoch(
+                      (int.parse(element.date)) * 1000))
+                  .inDays !=
+              prev) {
+            filteredWeather.add(element);
+            prev = DateTime.now()
+                .difference(DateTime.fromMillisecondsSinceEpoch(
+                    (int.parse(element.date)) * 1000))
+                .inDays;
+            print("prev: $prev");
+          }
+        });
+        emit(WeatherDataFiltered(filteredWeatherData: filteredWeather));
+      } catch (ex) {
+        emit(WeatherDataFilterFailed(error: ex.toString()));
+      }
     });
   }
 

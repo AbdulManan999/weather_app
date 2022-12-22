@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:weather_app/feature/home/ui/screens/home_details.dart';
+
 import '../../feature/landing/landing_page.dart';
 import '../../feature/signin_signup/resources/auth_repository.dart';
 import '../../feature/signin_signup/ui/screen/sign_in_page.dart';
@@ -32,7 +33,10 @@ class RouteGenerator {
         return _errorRoute();
 
       case Routes.homeDetails:
-        return MaterialPageRoute<dynamic>(builder: (_) => HomeDetails());
+        return MaterialPageRoute<dynamic>(
+            builder: (_) => HomeDetails(
+                  data: args,
+                ));
 
       default:
         return _errorRoute();
