@@ -2,16 +2,8 @@ import 'package:flutter/material.dart';
 
 final ThemeData basicTheme = _buildBasicTheme();
 
-final Color primaryColor = Color(0xFFFF2094);
-final Color secondaryColor = Color(0xFFFF31C5);
 final Color errorColor = Color(0xFFFF4E4E);
 final Color bodyText1Color = Color(0xFF555555);
-final Color primaryShadeColor = Color(0x1AFF2094);
-final Color colorPrimary1 = Color(0xFFFF63B4);
-final Color colorPrimary2 = Color(0xFF131313);
-final Color colorPrimary3 = Color(0xFF323232);
-final Color colorPrimary4 = Color(0xFF555555);
-final Color colorPrimary5 = Color(0xFF888888);
 
 TextTheme _buildTextTheme(TextTheme base) {
   return base.copyWith(
